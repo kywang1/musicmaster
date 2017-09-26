@@ -3,7 +3,7 @@ import './App.css';
 import {FormGroup,FormControl,InputGroup,Glyphicon} from 'react-bootstrap';
 import Profile from './Profile';
 import Gallery from './Gallery';
-import Recommendations from './Recommendations';
+//import Recommendations from './Recommendations';
 
 class App extends Component{
     constructor(props){
@@ -22,7 +22,8 @@ class App extends Component{
                           + '&type=artist&limit=1';
         const RECOMMENDED_URL = "https://api.spotify.com/v1/recommendations";
         let ALBUM_URL = 'https://api.spotify.com/v1/artists/'; //{id}/top-tracks
-        var accessToken = "BQD-aKQamF3UlDStSpHqTfa53JGzBJTB9x-SCQ-EYGJ2C14kOAYNIAqHP6XQkp2nx51KQP03Kd1shYb7hfhwuSYFxEHlwts9_lHcYm6-Qjq3aqAAJgX5b4zLBiuGLIzqLrGM3RPAO3OwNOwV_0ERtQ4s7AS9nVt-T_0H&refresh_token=AQBl16uCock_B-S-xZPhW3BbxQsC4MPnbVKGUJqP_lmkG_Bu2CFL467wf4Xaksn8hm7mVwsNwxFBpmODHcq8zcw1j0oAQ-vjfydOGTxJ61Qx5F6NTd3SiyXPJBNDW0KbHJM";
+        var accessToken = "BQD8c2owm5bi5sz9FuNkRk-JKWsUOzkRD0n-552ICYxiC9u8nsA2CkEunGupxUDAb78VO9h3r5EOSgo9HoMcXF8ybBAaNHLtWDqmSQmv59POrnRi-jtS2CNWPk13E5XrU169BnRyj-NjRug252ekYjuIjtRXL33QqfWX&refresh_token=AQCPh9RzwcLPvmEQPteUUNgSdEYzrl2NiBg3OJC_I1cpYSpmBmlbMFQnsKHH55wIhJcYuJPO7VCzhPMt6pKKAle-Mt-PYplzhOq8qMsPIPITDTn_DXirdc1avTD4AO7XKlM";
+
         var myOptions = {
           method:'Get',
           headers:{
@@ -35,8 +36,15 @@ class App extends Component{
         fetch(FETCH_URL,myOptions)
           .then(response => response.json())
           .then(json=>{
-            const artist = json.artists.items[0];
-            this.setState({artist});
+            console.log(json.artists);
+            var artist;
+            if(json.artists.items.length > 0){
+              artist = json.artists.items[0];
+              this.setState({artist});
+            }else{
+              return 0;
+            }
+
 
             //Grab top Ten tracks from json
             FETCH_URL = `${ALBUM_URL}${artist.id}/top-tracks?country=US&`
@@ -51,9 +59,18 @@ class App extends Component{
             fetch(FETCH_URL,myOptions)
               .then(response=>response.json())
               .then(json=>{
+                let recommendations = [];
+                for (var i = 0; i < json.tracks.length; i++) {
+                  if(json.tracks[i].preview_url !== null){
+                    recommendations.push(json.tracks[i]);
+                  }
+                }
+                this.setState({recommendations});
+                /*
                 const recommendations = json.tracks;
                 this.setState({recommendations});
                 console.log(this.state.recommendations);
+                */
               })
           });
     }
@@ -90,8 +107,6 @@ class App extends Component{
                       />
                       <Gallery
                         tracks = {this.state.tracks}
-                      />
-                      <Recommendations
                         recommendations = {this.state.recommendations}
                       />
                     </div>

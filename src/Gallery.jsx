@@ -40,6 +40,7 @@ class Gallery extends Component{
 
   render(){
     const {tracks} = this.props;
+    const {recommendations} = this.props;
     return(
       <div>
         <h1>Top Ten Tracks</h1>
@@ -67,6 +68,35 @@ class Gallery extends Component{
               </div>
               <p className = "track-text">
                 {track.name}
+              </p>
+            </div>
+          )
+        })}
+        <h1>Recommended Songs</h1>
+        {recommendations.map((recommendation,k)=>{
+          const recommendationImg = recommendation.album.images[0].url;
+          return (
+            <div
+              key = {k}
+              className='recommendation'
+              onClick={()=>this.playAudio(recommendation.preview_url)}
+            >
+              <img
+                src = {recommendationImg}
+                className = 'track-img'
+                alt = 'recommendation'
+              />
+              <div className = "recommendation-play">
+                <div className = "recommendation-play-inner">
+                  {
+                    this.state.playingUrl === recommendation.preview_url
+                    ? <span> | |</span>
+                    : <span>&#9654;</span>
+                  }
+                </div>
+              </div>
+              <p className = "recommendation-text">
+                {recommendation.name}
               </p>
             </div>
           )
